@@ -1,14 +1,22 @@
+
 {
   "name": "intro-to-backend-development",
   "version": "1.0.0",
-  "description": "this project is for the tutorial of intro to backend",
+  "description": "This project is for the tutorial of intro to backend",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sharmaparth2502/intro-to-backend-development.git"
+  },
+  "author": "Parth Sharma",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sharmaparth2502/intro-to-backend-development/issues"
+  },
+  "homepage": "https://github.com/sharmaparth2502/intro-to-backend-development",
   "type": "commonjs",
   "dependencies": {
     "express": "^5.3.0"
