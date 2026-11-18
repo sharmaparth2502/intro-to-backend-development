@@ -45,7 +45,7 @@ const updatePost = async (req, res) => {
         const post = await Post.findByIdAndUpdate(
             req.params.id,
             req.body,
-            { new: true, runValidators: true }
+            { returnDocument: 'after', runValidators: true }
         );
 
         if (!post) {
