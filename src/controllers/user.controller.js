@@ -5,12 +5,39 @@ const bcrypt = require('bcryptjs');
 // Register a new user
 const registerUser = async (req, res) => {
     try {
-        const { username, email, password } = req.body;
+        const { username, email, password } = req.body || {};
 
         // Validate input
         if (!username || !email || !password) {
             return res.status(400).json({
                 message: "All fields are required"
+            });
+        }
+
+        if (
+            typeof username !== 'string' ||
+            typeof email !== 'string' ||
+            typeof password !== 'string'
+        ) {
+            return res.status(400).json({
+                message: "Invalid input format"
+            });
+        }
+
+        const cleanUsername = username.trim();
+        const cleanEmail = email.trim().toLowerCase();
+
+        if (!cleanUsername) {
+            return res.status(400).json({
+                message: "Username cannot be empty"
+            });
+        }
+
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!emailPattern.test(cleanEmail)) {
+            return res.status(400).json({
+                message: "Invalid email address"
             });
         }
 
@@ -21,7 +48,9 @@ const registerUser = async (req, res) => {
         }
 
         // Check if email already exists
-        const existingUser = await User.findOne({ email });
+        const existingUser = await User.findOne({
+            email: cleanEmail
+        });
 
         if (existingUser) {
             return res.status(409).json({
@@ -33,8 +62,8 @@ const registerUser = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const user = await User.create({
-            username,
-            email,
+            username: cleanUsername,
+            email: cleanEmail,
             password: hashedPassword
         });
 
@@ -50,6 +79,18 @@ const registerUser = async (req, res) => {
 
     } catch (error) {
         console.error("Registration error:", error);
+
+        if (error.code === 11000) {
+            return res.status(409).json({
+                message: "Email already registered"
+            });
+        }
+
+        if (error.name === 'ValidationError') {
+            return res.status(400).json({
+                message: "Invalid user data"
+            });
+        }
 
         res.status(500).json({
             message: "Internal server error"
